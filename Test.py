@@ -1,6 +1,5 @@
 from NeteaseCloud.NeteaseCloudMusic import NeteaseCloudMusic
-import matplotlib.pyplot as plt
-from wordcloud import WordCloud
+
 
 #配置文件
 headers = {
@@ -17,51 +16,12 @@ params = {
 
 url = 'https://music.163.com/weapi/v1/resource/comments/R_SO_4_436514312?csrf_token='
 
-#调用请求逻辑
-neteaseCloudMusic = NeteaseCloudMusic()
+if __name__ == "__main__":
+    # 调用请求逻辑
+    neteaseCloudMusic = NeteaseCloudMusic(headers, url, params)
 
-neteaseCloudMusic.config(headers,url,params)
+    neteaseCloudMusic.request()
 
-result = neteaseCloudMusic.request()
-
-#创建热门评论对象，存储到集合中
-hotComments = []
-
-for res in result['hotComments']:
-    info = {
-        "nickName":res["user"]["nickname"],
-        "commentsCount":res["likedCount"],
-        "content":res["content"]
-    }
-    hotComments.append(info)
-
-#绘图
-nickname = []
-count = []
-content = []
-
-for item in hotComments:
-    nickname.append(item['nickName'])
-    count.append(item['commentsCount'])
-    content.append(item['content'])
-
-plt.rcParams.update({'figure.autolayout': True})
-
-plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
-
-fig, ax = plt.subplots()
-ax.barh(nickname, count)
-labels = ax.get_xticklabels()
-plt.setp(labels, rotation=45, horizontalalignment='right')
-ax.set( xlabel='点赞数量', ylabel='昵称',title='网易云音乐-成都 热评统计')
-
-#wordcloud词云
-content_text = " ".join(content)
-wordcloud = WordCloud("C:\Windows\Fonts\simfang.ttf").generate(content_text)
-plt.figure()
-plt.imshow(wordcloud,interpolation='bilinear')
-plt.axis('off')
-plt.show()
 
 
 
